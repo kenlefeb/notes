@@ -1,0 +1,12 @@
+{
+  "name": "notes CLI",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "cliffy": "^2.5.1"
+  }
+}
