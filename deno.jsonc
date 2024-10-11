@@ -1,0 +1,15 @@
+{
+  "imports": {
+    "date-fns": "npm:date-fns@^4.1.0"
+  },
+  "compilerOptions": {
+    "lib": [
+      "deno.ns",
+      "dom"
+    ], // Add relevant TypeScript libraries for Deno and browser
+    "strict": true // Enable strict type-checking
+  },
+  "tasks": {
+    "start": "deno run --allow-net src/notes.ts" // Example task to run your program
+  }
+}

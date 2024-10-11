@@ -1,33 +1,47 @@
-#!/usr/bin/env node
+#!/usr/bin/env deno run --allow-net --allow-read
 
 // For details, see https://www.npmjs.com/package/sade
 
 import sade from 'sade';
-import {Configuration} from './configuration.ts';
-import dayjs from 'dayjs';
+import { format } from 'date-fns';
+import process from "node:process";
 
-const version: string = "1.0.0";
-const configFile: string = '~/notes.config.ts';
-const configuration: Configuration = Configuration.Load(configFile);
-const cli = sade('notes');
+const prog = sade('notes');
 
-cli
-  .version(version)
-  .option('-c, --config', 'Provide path to custom config', configFile);
+const defaultConfig = {
+  configFile: '/home/node/notes.config.ts',
+  today: format(new Date(), 'yyyy-MM-dd'),
+};
 
-  // Daily Notes
-cli
-  .command('daily add')
-  .describe('Creates a new Daily Note.')
-  .option('-d, --date', 'Specify today\'s date for the new note', dayjs().format('yyyy-MM-dd'))
-  .example('daily add')
-  .example('daily add --date 2024-12-25')
-  .action((options) => {
-    console.log('Configuration', configuration);
-    console.log('> these are extra opts', options);
+prog
+  .version('1.0.0')
+  .option('--date, -d', 'The date to use for "today"', defaultConfig.today)
+  .option('-c, --config', 'Provide path to custom config', defaultConfig.configFile);
 
-    const today:Date = dayjs(options.date).toDate();
-    console.log(`> assuming today is ${today}`);
+prog
+  .command('daily')
+  .describe('Build the source directory. Expects an `index.js` entry file.')
+  .option('-o, --output', 'Change the name of the output file', 'bundle.js')
+  .example('build src build --global --config ~/notes.config.ts')
+  .example('build app public -o main.js')
+  .action(async (src, dest, opts) => {
+    let config = { ...defaultConfig };
+
+    if (opts.config) {
+      try {
+        const importedConfig = await import(`file://${opts.config}`);
+        config = { ...config, ...importedConfig.default };
+        console.log('> loaded config', config);
+       } catch (error) {
+        console.error(`> error loading config: ${opts.config}`);
+        console.error(error);
+        process.exit(1);
+      }
+    }
+
+    console.log(`> building from ${src} to ${dest}`);
+    console.log('> these are extra opts', opts);
+    console.log('> using config', config);
   });
 
-cli.parse(process.argv);
+prog.parse(process.argv);
