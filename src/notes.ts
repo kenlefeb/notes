@@ -5,43 +5,27 @@
 import sade from 'sade';
 import { format } from 'date-fns';
 import process from "node:process";
+import { Configuration } from "./Configuration.ts";
 
+const configFile: string = '/home/node/notes.config.json';
 const prog = sade('notes');
-
-const defaultConfig = {
-  configFile: '/home/node/notes.config.ts',
-  today: format(new Date(), 'yyyy-MM-dd'),
-};
 
 prog
   .version('1.0.0')
-  .option('--date, -d', 'The date to use for "today"', defaultConfig.today)
-  .option('-c, --config', 'Provide path to custom config', defaultConfig.configFile);
+  .option('-c, --config', 'Provide path to custom config', configFile);
 
 prog
-  .command('daily')
-  .describe('Build the source directory. Expects an `index.js` entry file.')
-  .option('-o, --output', 'Change the name of the output file', 'bundle.js')
-  .example('build src build --global --config ~/notes.config.ts')
-  .example('build app public -o main.js')
-  .action(async (src, dest, opts) => {
-    let config = { ...defaultConfig };
+  .command('daily add <date>')
+  .describe('Create a new Daily Note for the optional given date. If you don\'t provide a date, it will default to today.')
+  .example('daily add 2021-01-01')
+  .example('daily add')
+  .action(async (date, options) => {
 
-    if (opts.config) {
-      try {
-        const importedConfig = await import(`file://${opts.config}`);
-        config = { ...config, ...importedConfig.default };
-        console.log('> loaded config', config);
-       } catch (error) {
-        console.error(`> error loading config: ${opts.config}`);
-        console.error(error);
-        process.exit(1);
-      }
-    }
+    const configuration = await Configuration.load(options.config ?? configFile);
+    const note = await DailyNotes.create(date, configuration);
 
-    console.log(`> building from ${src} to ${dest}`);
-    console.log('> these are extra opts', opts);
-    console.log('> using config', config);
+    console.log(`Created new Daily Note for ${format(note.date, 'yyyy-MM-dd')}`);
+    console.log(`> ${note.path}`);
   });
 
 prog.parse(process.argv);

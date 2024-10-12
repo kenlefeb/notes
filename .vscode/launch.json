@@ -23,6 +23,23 @@
                 "from",
                 "to"
             ]
+        },
+        {
+            "name": "Debug Deno Tests",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/configuration.test.ts",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "deno",
+            "runtimeArgs": [
+                "test",
+                "--inspect-brk",
+                "--allow-read",
+                "--allow-write",
+                "--allow-net",
+                "--allow-env"
+            ],
+            "attachSimplePort": 9229
         }
     ]
 }
