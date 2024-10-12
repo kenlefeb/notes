@@ -1,5 +1,7 @@
-import { sade, process } from './deps.ts';
+import console from "node:console";
+import { sade, process, dayjs } from "./deps.ts";
 import { Configuration } from "./src/Configuration.ts";
+import { DailyNote } from "./src/DailyNote.ts";
 
 const configFile: string = Configuration.defaultFile;
 const cli = sade("notes");
@@ -19,10 +21,11 @@ cli
     const configuration = await Configuration.load(
       options.config ?? configFile
     );
-    const note = await DailyNotes.create(date, configuration);
+    const theDate: Date = date ? dayjs(date).toDate() : new Date();
+    const note: DailyNote = await DailyNote.create(theDate, configuration);
 
     console.log(
-      `Created new Daily Note for ${format(note.date, "yyyy-MM-dd")}`
+      `Created new Daily Note for ${dayjs(note.date).format("YYYY-MM-DD")}`
     );
     console.log(`> ${note.path}`);
   });

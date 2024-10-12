@@ -1,6 +1,7 @@
 import path from "node:path";
 import { FileSystem } from "./FileSystem.ts";
 import _ from "npm:lodash";
+import { isAbsolute } from "node:path/posix";
 
 export class Configuration {
   today: Date = new Date();
@@ -34,8 +35,36 @@ export class Paths {
     this._vault = path.resolve(vault);
   }
 
-  journal: string = path.resolve(this.vault, "@"); // This contains daily notes
-  rolodex: string = path.resolve(this.vault, "="); // This contains notes about specific entities (people, places, things)
-  encyclopedia: string = path.resolve(this.vault, "#"); // This contains notes about topics
-  library: string = path.resolve(this.vault, "$"); // This contains system files, such as templates
+  private _journal: string = path.resolve(this.vault, "@"); // This contains daily notes
+  public get journal(): string {
+    return this._journal;
+  }
+  public set journal(value: string) {
+    this._journal = this.resolve(value);
+  }
+  private _rolodex: string = path.resolve(this.vault, "="); // This contains notes about specific entities (people, places, things)
+  public get rolodex(): string {
+    return this._rolodex;
+  }
+  public set rolodex(value: string) {
+    this._rolodex = this.resolve(value);
+  }
+  private _encyclopedia: string = path.resolve(this.vault, "#"); // This contains notes about topics
+  public get encyclopedia(): string {
+    return this._encyclopedia;
+  }
+  public set encyclopedia(value: string) {
+    this._encyclopedia = this.resolve(value);
+  }
+  private _library: string = path.resolve(this.vault, "$"); // This contains system files, such as templates
+  public get library(): string {
+    return this._library;
+  }
+  public set library(value: string) {
+    this._library = this.resolve(value);
+  }
+
+  private resolve(value: string): string {
+    return isAbsolute(value) ? value : path.resolve(this.vault, value);
+  }
 }
