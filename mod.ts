@@ -31,7 +31,7 @@ cli
 
     if (options.debug) {
       console.log("Configuration:", configuration);
-      console.log("Vault Path:", configuration.paths.vault);
+      console.log("Vault Path:", configuration.Vault);
     }
 
     const theDate: Date = date ? dayjs(date).toDate() : new Date();

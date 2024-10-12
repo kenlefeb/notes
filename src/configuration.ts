@@ -1,94 +1,52 @@
 import path from "node:path";
-import { FileSystem } from "./FileSystem.ts";
-import _ from "npm:lodash";
-import { isAbsolute } from "node:path/posix";
-import { z } from "npm:zod";
-import { load } from "https://deno.land/x/config/mod.ts";
+import { FileSystem } from "../data/.deno/gen/file/D/src/github.com/kenlefeb/notes/src/FileSystem.ts.js";
 
 export class Configuration {
-  constructor() {
-    const schema = z.object({
-      paths: z.object({
-        vault: z
-          .string()
-          .default(path.resolve(FileSystem.homeDirectory, "notes")),
-        journal: z.string().default("@"),
-        rolodex: z.string().default("="),
-        encyclopedia: z.string().default("#"),
-        library: z.string().default("$"),
-      }),
-    });
+  paths: {
+    vault: string;
+    journal: string;
+    rolodex: string;
+    encyclopedia: string;
+    library: string;
+  };
+  static defaultFile: string = "~/.notes.json";
+
+  constructor(paths: {
+    vault: string;
+    journal: string;
+    rolodex: string;
+    encyclopedia: string;
+    library: string;
+  }) {
+    this.paths = paths;
   }
 
-  paths: Paths = new Paths();
-
-  public static get defaultFile(): string {
-    return path.join(FileSystem.homeDirectory, ".notes.json");
-  }
-
-  public static async load(filespec: string): Promise<Configuration> {
-    const config = await load({ file: filespec });
-    const parsed = schema.parse(config);
-
-    if (FileSystem.fileExists(filespec)) {
-      const json = await Deno.readTextFile(filespec);
-      return JSON.parse(json);
-    } else {
-      return new Configuration();
+  static async load(filePath: string): Promise<Configuration> {
+    if (filePath.startsWith("~")) {
+      filePath = path.join(FileSystem.homeDirectory, filePath.slice(1));
     }
-  }
-}
-
-export class Paths {
-  // VAULT - the root of it all
-  private _vault: string = "";
-  public get vault(): string {
-    return this._vault;
-  }
-  public set vault(value: string) {
-    this._vault = value ?? path.resolve(FileSystem.homeDirectory, "notes");
+    const jsonText = await Deno.readTextFile(filePath);
+    const data = JSON.parse(jsonText);
+    return new Configuration(data.paths);
   }
 
-  // JOURNAL - for daily notes
-  private _journal: string = this.resolve("@");
-  public get journal(): string {
-    return this._journal;
-  }
-  public set journal(value: string) {
-    this._journal = this.resolve(value);
+  get Vault(): string {
+    return this.paths.vault;
   }
 
-  // ROLODEX - for entities
-  private _rolodex: string = this.resolve("=");
-  public get rolodex(): string {
-    return this._rolodex;
-  }
-  public set rolodex(value: string) {
-    this._rolodex = this.resolve(value);
+  get Journal(): string {
+    return path.resolve(this.Vault, this.paths.journal);
   }
 
-  // ENCYCLOPEDIA - for reference material
-  private _encyclopedia: string = this.resolve("#");
-  public get encyclopedia(): string {
-    return this.resolve(this._encyclopedia ?? "#");
-  }
-  public set encyclopedia(value: string) {
-    this._encyclopedia = this.resolve(value);
+  get Rolodex(): string {
+    return path.resolve(this.Vault, this.paths.rolodex);
   }
 
-  // LIBRARY - for scripts and other utilities
-  private _library: string = this.resolve("$");
-  public get library(): string {
-    return this.resolve(this._library ?? "$");
-  }
-  public set library(value: string) {
-    this._library = this.resolve(value);
+  get Encyclopedia(): string {
+    return path.resolve(this.Vault, this.paths.encyclopedia);
   }
 
-  private resolve(value: string): string {
-    if (isAbsolute(value)) {
-      return value;
-    }
-    return path.resolve(this.vault, value);
+  get Library(): string {
+    return path.resolve(this.Vault, this.paths.library);
   }
 }

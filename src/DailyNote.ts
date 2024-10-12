@@ -33,5 +33,5 @@ export class DailyNote {
 
 function getPath(date: Date, configuration: Configuration): string {
   const subpath = dayjs(date).format("YYYY/MM MMMM/DD dddd/YYYY-MM-DD[.md]");
-  return path.join(configuration.paths.journal, path.normalize(subpath));
+  return path.join(configuration.Journal, path.normalize(subpath));
 }
