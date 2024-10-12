@@ -1,15 +1,17 @@
 {
   "imports": {
-    "date-fns": "npm:date-fns@^4.1.0"
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/path": "jsr:@std/path@^1.0.6"
   },
   "compilerOptions": {
     "lib": [
-      "deno.ns",
-      "dom"
-    ], // Add relevant TypeScript libraries for Deno and browser
+      "deno.ns"
+    ],
     "strict": true // Enable strict type-checking
   },
   "tasks": {
-    "start": "deno run --allow-net src/notes.ts" // Example task to run your program
-  }
+    "start": "deno run --allow-net mod.ts",
+    "dev": "deno run --watch main.ts"
+  },
+  "npmClient": "npm"
 }

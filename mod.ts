@@ -1,11 +1,5 @@
-#!/usr/bin/env deno run --allow-net --allow-read
-
-// For details, see https://www.npmjs.com/package/sade
-
-import sade from 'sade';
-import { format } from 'date-fns';
-import process from "node:process";
-import { Configuration } from "./Configuration.ts";
+import { sade, process } from './deps.ts';
+import { Configuration } from "./src/configuration.ts";
 
 const configFile: string = '/home/node/notes.config.json';
 const prog = sade('notes');
