@@ -11,7 +11,10 @@
   },
   "tasks": {
     "start": "deno run --allow-net mod.ts",
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run --watch main.ts",
+    "compile:win": "deno compile --target x86_64-pc-windows-msvc --allow-all --output ./out/win/notes.exe mod.ts",
+    "compile:mac": "deno compile --target x86_64-apple-darwin --allow-all --output ./out/mac/notes.app mod.ts",
+    "compile": "deno task compile:win && deno task compile:mac"
   },
   "npmClient": "npm"
 }

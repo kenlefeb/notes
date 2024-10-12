@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/mod.ts",
             "cwd": "${workspaceFolder}",
             "env": {
-                "USERPROFILE": "${workspaceFolder}\\data"
+                "xUSERPROFILE": "${workspaceFolder}\\data"
             },
             "runtimeExecutable": "deno",
             "runtimeArgs": [
@@ -22,7 +22,8 @@
             "attachSimplePort": 9229,
             "args": [
                 "daily",
-                "add"
+                "add",
+                "--debug"
             ]
         },
         {

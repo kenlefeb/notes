@@ -1,3 +1,4 @@
 deno.*.tmp
 deno.lock
 .deno/
+out/
