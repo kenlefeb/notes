@@ -17,7 +17,8 @@
 		},
 		"ghcr.io/devcontainers/features/powershell:1": {
 			"version": "latest"
-		}
+		},
+		"ghcr.io/devcontainers/features/git:1": {}
 	}
 
 	, "mounts": [
@@ -33,7 +34,8 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "yarn install",
-
+	,
+	"postStartCommand": "/bin/sh .devcontainer/postStart.sh"
 	// Configure tool-specific properties.
 	// "customizations": {},
 
