@@ -1,5 +1,5 @@
 import { sade, process } from './deps.ts';
-import { Configuration } from "./src/configuration.ts";
+import { Configuration } from "./src/Configuration.ts";
 
 const configFile: string = '/home/node/notes.config.json';
 const prog = sade('notes');
