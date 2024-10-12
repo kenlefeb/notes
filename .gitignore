@@ -1,1 +1,3 @@
 deno.*.tmp
+deno.lock
+.deno/

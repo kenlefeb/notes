@@ -8,10 +8,12 @@
             "request": "launch",
             "name": "Launch Program",
             "type": "node",
-            "program": "${workspaceFolder}/src/notes.ts",
-            "cwd": "${workspaceFolder}/src",
-            "env": {},
-            "runtimeExecutable": "/usr/local/bin/deno",
+            "program": "${workspaceFolder}/mod.ts",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "USERPROFILE": "${workspaceFolder}\\data"
+            },
+            "runtimeExecutable": "deno",
             "runtimeArgs": [
                 "run",
                 "--inspect-brk",
@@ -19,27 +21,28 @@
             ],
             "attachSimplePort": 9229,
             "args": [
-                "build",
-                "from",
-                "to"
+                "daily",
+                "add"
             ]
         },
         {
             "name": "Debug Deno Tests",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/src/configuration.test.ts",
+            "program": "${workspaceFolder}/tests",
             "cwd": "${workspaceFolder}",
+            "env": {
+                "USERPROFILE": "${workspaceFolder}\\data"
+            },
             "runtimeExecutable": "deno",
             "runtimeArgs": [
                 "test",
                 "--inspect-brk",
-                "--allow-read",
-                "--allow-write",
-                "--allow-net",
-                "--allow-env"
+                "--allow-all"
             ],
-            "attachSimplePort": 9229
+            "attachSimplePort": 9229,
+            "outputCapture": "std",
+            "console": "integratedTerminal"
         }
     ]
 }

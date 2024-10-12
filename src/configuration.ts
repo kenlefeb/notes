@@ -1,11 +1,17 @@
-export class Configuration {
+import path from "node:path";
+import { FileSystem } from "./FileSystem.ts";
+import _ from "npm:lodash";
 
+export class Configuration {
   today: Date = new Date();
   paths: Paths = new Paths();
 
-  static async load(path: string) {
+  public static get defaultFile(): string {
+    return path.join(FileSystem.homeDirectory, ".notes.json");
+  }
 
-    if (fileExists(path)) {
+  public static async load(path: string) {
+    if (FileSystem.fileExists(path)) {
       return await loadFromFile();
     } else {
       return new Configuration();
@@ -14,31 +20,22 @@ export class Configuration {
     async function loadFromFile() {
       const configData = JSON.parse(await Deno.readTextFile(path));
       const config = new Configuration();
-      Object.assign(config, configData);
-      return config;
+      return _.merge(config, configData);
     }
-
-    function fileExists(path: string): boolean {
-      try {
-        const stat = Deno.statSync(path);
-        return stat.isFile;
-      } catch (error) {
-        if (error instanceof Deno.errors.NotFound) {
-          return false;
-        } else {
-          throw error;
-        }
-      }
-    }
-
   }
-
 }
 
 export class Paths {
-  vault: string = "~/notes"; // This contains all notes
-  journal: string = `${this.vault}/@`; // This contains daily notes
-  rolodex: string = `${this.vault}/=`; // This contains notes about specific entities (people, places, things)
-  encyclopedia: string = `${this.vault}/#`; // This contains notes about topics
-  library: string = `${this.vault}/$`; // This contains system files, such as templates
+  private _vault: string = FileSystem.resolve("~/notes");
+  public get vault(): string {
+    return this._vault;
+  }
+  public set value(vault: string) {
+    this._vault = path.resolve(vault);
+  }
+
+  journal: string = path.resolve(this.vault, "@"); // This contains daily notes
+  rolodex: string = path.resolve(this.vault, "="); // This contains notes about specific entities (people, places, things)
+  encyclopedia: string = path.resolve(this.vault, "#"); // This contains notes about topics
+  library: string = path.resolve(this.vault, "$"); // This contains system files, such as templates
 }
